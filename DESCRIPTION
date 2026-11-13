@@ -1,0 +1,27 @@
+Package: tenniscareer
+Title: Retrieve and Plot Tennis Career Matches from Tennis Abstract
+Version: 0.1.0
+Authors@R:
+    person("Kassem", "Lim", email = "kassemlim@berkeley.edu",
+           role = c("aut", "cre"))
+Description: Downloads a professional tennis player's career match file
+    from Tennis Abstract <https://www.tennisabstract.com/>, parses the
+    JavaScript match array, and returns a clean data frame with the
+    player's age, the opponent's age, the age difference, and the outcome
+    of every played match. Handles both the women's format (opponent date
+    of birth) and the men's format (opponent age). A companion function
+    draws a scatter plot of age difference against the player's age,
+    coloured by wins and losses.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends:
+    R (>= 4.1.0)
+Imports:
+    curl,
+    ggplot2 (>= 3.3.0),
+    jsonlite
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.1.0
