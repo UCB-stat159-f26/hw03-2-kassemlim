@@ -142,12 +142,34 @@ testthat::test_local()
 
 ## Personal Reflections
 
-<!-- Replace this section with your own reflections. Some prompts you might
-     respond to:
-     - What was it like turning the earlier analysis scripts into a package?
-     - What did you find tricky about the differences between the women's
-       and men's data files?
-     - How did writing offline tests change how you structured the code?
-     - What would you add or do differently next time? -->
+Turning a one-off analysis into a package changed what "done" meant. A
+script only has to work once, for one player, on my own machine. A package
+has to work for any player, with any reasonable spelling of their name, on
+someone else's computer, after being installed straight from GitHub.
 
-_To be written._
+The biggest surprise was how different the women's and men's career files
+are. They look almost identical at first, but the same column holds the
+opponent's date of birth in one and the opponent's age in the other, and the
+men's rows are much longer. The package detects which format a file uses by
+checking what that column actually contains rather than trusting the
+player's name. Another surprise was that the career file doesn't include the
+player's own date of birth at all, so the package also reads it from the
+player's profile page.
+
+Not hitting the live server during tests shaped the design more than I
+expected. Keeping every download in one small function made it easy to
+replace with a fake in the tests, and splitting the work into separate
+download, parse, and clean steps meant each step could be checked against
+the mockup files on its own. The 20-line limit pushed in the same direction:
+it forced each function to do one thing.
+
+Working against a real website also brought problems the mockup data never
+would have. Tennis Abstract starts refusing requests after a few players in
+a row, so the package now waits and retries instead of failing straight
+away. Some career files also stop before a player's final seasons, which is
+something to keep in mind when reading the plots.
+
+If I kept working on this, I would add support for names typed in lowercase
+without spaces (such as `"serenawilliams"`), cache downloads so repeated
+calls don't hit the server again, and add more options for customizing the
+plot.
