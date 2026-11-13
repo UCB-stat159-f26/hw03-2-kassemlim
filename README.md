@@ -125,8 +125,10 @@ get_player_career("GastonSanchez")
 - Names typed without spaces are used as given apart from capitalising the
   first letter, so `"SerenaWilliams"` works but `"serenawilliams"` does not.
   Separating first and last names with a space is the most reliable format.
-- Tennis Abstract may briefly limit repeated requests (HTTP 429); waiting a
-  minute and trying again resolves this.
+- Each player needs two requests (the career file and the profile page).
+  Tennis Abstract briefly limits rapid repeated requests (HTTP 429); the
+  package then waits and retries automatically (up to about a minute) before
+  reporting an error.
 
 ## Testing
 

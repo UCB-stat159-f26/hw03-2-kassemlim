@@ -5,5 +5,6 @@ local_mocked_bindings(
   fetch_url = function(url) {
     stop("Live network requests are disabled in tests: ", url, call. = FALSE)
   },
+  pause_before_retry = function(attempt) invisible(NULL),
   .env = teardown_env()
 )

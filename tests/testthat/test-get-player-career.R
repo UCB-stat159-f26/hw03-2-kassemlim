@@ -38,11 +38,39 @@ test_that("HTTP failures other than 404 give meaningful errors", {
   local_mocked_bindings(fetch_url = function(url) {
     list(status = 429, text = "Too Many Requests")
   })
-  expect_error(get_player_career("Serena Williams"), "HTTP 429")
+  expect_error(suppressMessages(get_player_career("Serena Williams")),
+               "HTTP 429")
   local_mocked_bindings(fetch_url = function(url) {
     list(status = 500, text = "")
   })
   expect_error(get_player_career("Serena Williams"), "HTTP status 500")
+})
+
+test_that("rate-limited requests are retried before succeeding", {
+  calls <- 0
+  local_mocked_bindings(fetch_url = function(url) {
+    calls <<- calls + 1
+    if (calls <= 2) return(list(status = 429, text = ""))
+    list(status = 200, text = "ok")
+  })
+  messages <- capture_messages(
+    response <- fetch_with_retry("https://example.org")
+  )
+  expect_match(messages, "retrying in (10|20) seconds")
+  expect_length(messages, 2)
+  expect_equal(response$status, 200)
+  expect_equal(calls, 3)
+})
+
+test_that("rate limiting gives up after a fixed number of tries", {
+  calls <- 0
+  local_mocked_bindings(fetch_url = function(url) {
+    calls <<- calls + 1
+    list(status = 429, text = "")
+  })
+  suppressMessages(response <- fetch_with_retry("https://example.org"))
+  expect_equal(response$status, 429)
+  expect_equal(calls, length(retry_wait_seconds) + 1)
 })
 
 test_that("a non-JS response for a valid URL is reported as malformed", {
